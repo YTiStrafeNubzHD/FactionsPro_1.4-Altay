@@ -310,7 +310,7 @@ class FactionCommands{
 						return true;
 					}
 
-					$fac = $this->plugin->factionFromPoint($x, $z, $sender->getLevel()->getName());
+					$fac = $this->plugin->factionFromPoint($x, $z, $sender->getLevel()->getDisplayName());
 					$sender->sendMessage($this->plugin->formatMessage("This plot is claimed by $fac"));
 				}
 
@@ -337,7 +337,7 @@ class FactionCommands{
 					$y = floor($sender->getY());
 					$z = floor($sender->getZ());
 					$faction = $this->plugin->getPlayerFaction($sender->getPlayer()->getName());
-					if(!$this->plugin->drawPlot($sender, $faction, $x, $y, $z, $sender->getPlayer()->getLevel(), $this->plugin->prefs->get("PlotSize"))){
+					if(!$this->plugin->drawPlot($sender, $faction, $x, $y, $z, $sender->getPlayer()->getLevelManager()->getLevel(), $this->plugin->prefs->get("PlotSize"))){
 						return true;
 					}
 					$sender->sendMessage($this->plugin->formatMessage("Plot claimed.", true));
@@ -487,7 +487,7 @@ class FactionCommands{
 					$stmt->bindValue(":x", $sender->getX());
 					$stmt->bindValue(":y", $sender->getY());
 					$stmt->bindValue(":z", $sender->getZ());
-					$stmt->bindValue(":world", $sender->getLevel()->getName());
+					$stmt->bindValue(":world", $sender->getLevel()->getDisplayName());
 					$result = $stmt->execute();
 					$sender->sendMessage($this->plugin->formatMessage("Home updated!", true));
 				}
@@ -522,7 +522,7 @@ class FactionCommands{
 					$result = $this->plugin->db->query("SELECT * FROM home WHERE faction = '$faction';");
 					$array = $result->fetchArray(SQLITE3_ASSOC);
 					if(!empty($array)){
-						$level = $this->plugin->getServer()->getLevelByName($array['world']);
+						$level = $this->plugin->getServer()->getLevelManager()->getLevelByName($array['world']);
 						$sender->getPlayer()->teleport(new Position($array['x'], $array['y'], $array['z'], $level));
 						$sender->sendMessage($this->plugin->formatMessage("Teleported home.", true));
 						return true;

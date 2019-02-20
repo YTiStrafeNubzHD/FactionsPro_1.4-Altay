@@ -194,21 +194,21 @@ class FactionMain extends PluginBase implements Listener{
     public function drawPlot($sender, $faction, $x, $y, $z, Level $level, $size) {
         $arm = ($size - 1) / 2;
         $block = new Snow();
-        if($this->cornerIsInPlot($x + $arm, $z + $arm, $x - $arm, $z - $arm, $level->getName())){
-            $claimedBy = $this->factionFromPoint($x, $z, $level->getName());
+        if($this->cornerIsInPlot($x + $arm, $z + $arm, $x - $arm, $z - $arm, $level->getDisplayName())){
+            $claimedBy = $this->factionFromPoint($x, $z, $level->getDisplayName());
             $sender->sendMessage($this->formatMessage("This area is aleady claimed by $claimedBy"));
             return false;
         }
         $level->setBlock(new Vector3($x + $arm, $y, $z + $arm), $block);
         $level->setBlock(new Vector3($x - $arm, $y, $z - $arm), $block);
-        $this->newPlot($faction, $x + $arm, $z + $arm, $x - $arm, $z - $arm, $level->getName());
+        $this->newPlot($faction, $x + $arm, $z + $arm, $x - $arm, $z - $arm, $level->getDisplayName());
         return true;
     }
 
     public function isInPlot(Player $player) {
         $x = $player->getFloorX();
         $z = $player->getFloorZ();
-        $level = $player->getLevel()->getName();
+        $level = $player->getLevel()->getDisplayName();
         $result = $this->db->query("SELECT faction FROM plots WHERE $x <= x1 AND $x >= x2 AND $z <= z1 AND $z >= z2 AND world = '$level';");
         $array = $result->fetchArray(SQLITE3_ASSOC);
         return empty($array) == false;
@@ -224,7 +224,7 @@ class FactionMain extends PluginBase implements Listener{
         $playerName = $player->getName();
         $x = $player->getFloorX();
         $z = $player->getFloorZ();
-        $level = $player->getLevel()->getName();
+        $level = $player->getLevel()->getDisplayName();
         return $this->getPlayerFaction($playerName) == $this->factionFromPoint($x, $z, $level);
     }
 
@@ -272,14 +272,14 @@ class FactionMain extends PluginBase implements Listener{
 		$f = $this->getPlayerFaction($playername);
 		if(!$this->isInFaction($playername)){
 			if(isset($this->purechat)){
-				$levelName = $this->purechat->getConfig()->get("enable-multiworld-chat") ? $p->getLevel()->getName() : null;
+				$levelName = $this->purechat->getConfig()->get("enable-multiworld-chat") ? $p->getLevel()->getDisplayName() : null;
 				$nameTag = $this->purechat->getNametag($p, $levelName);
 				$p->setNameTag($nameTag);
 			}else{
 				$p->setNameTag(TextFormat::ITALIC . TextFormat::YELLOW . "<$playername>");
 			}
 		}elseif(isset($this->purechat)){
-			$levelName = $this->purechat->getConfig()->get("enable-multiworld-chat") ? $p->getLevel()->getName() : null;
+			$levelName = $this->purechat->getConfig()->get("enable-multiworld-chat") ? $p->getLevel()->getDisplayName() : null;
 			$nameTag = $this->purechat->getNametag($p, $levelName);
 			$p->setNameTag($nameTag);
 		}else{
